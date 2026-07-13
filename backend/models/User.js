@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema(
     passwordResetToken: String,
     passwordResetExpires: Date,
 
-    // ✅ NEW: Track first login for OTP logic
+    // NEW: Track first login for OTP logic
     firstLoginDone: { type: Boolean, default: false },
     
     lastLogin: Date,

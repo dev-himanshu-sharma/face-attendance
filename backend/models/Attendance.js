@@ -3,15 +3,14 @@ const mongoose = require('mongoose');
 const attendanceSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    date: { type: Date, required: true }, // normalized to start-of-day
+    date: { type: Date, required: true }, 
     
-    // Precise timestamps with milliseconds
+    
     checkIn: { type: Date },
     checkOut: { type: Date },
     
-    // Working time tracking
-    workingHours: { type: Number, default: 0 }, // in minutes
-    workingSeconds: { type: Number, default: 0 }, // exact seconds
+    workingHours: { type: Number, default: 0 },
+    workingSeconds: { type: Number, default: 0 }, 
     
     checkInLocation: {
       ip: String,
@@ -37,7 +36,7 @@ const attendanceSchema = new mongoose.Schema(
 attendanceSchema.index({ user: 1, date: 1 }, { unique: true });
 attendanceSchema.index({ date: 1 });
 
-// Virtual for formatted working time
+
 attendanceSchema.virtual('workingTimeFormatted').get(function() {
   if (!this.workingSeconds) return '0h 0m 0s';
   const hours = Math.floor(this.workingSeconds / 3600);

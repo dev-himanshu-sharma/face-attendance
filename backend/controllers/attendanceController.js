@@ -7,14 +7,34 @@ const User = require('../models/User');
 const getISTTime = () => {
   const now = new Date();
   const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-  const istTime = new Date(utc + (5.5 * 3600000)); // IST = UTC + 5:30
+  const istTime = new Date(utc + (5.5 * 3600000));
   return istTime;
 };
 
+// Get start of IST day (midnight IST)
 const startOfISTDay = () => {
   const ist = getISTTime();
   ist.setHours(0, 0, 0, 0);
   return ist;
+};
+
+// Get end of IST day (23:59:59 IST)
+const endOfISTDay = () => {
+  const ist = getISTTime();
+  ist.setHours(23, 59, 59, 999);
+  return ist;
+};
+
+// Check if date is today in IST
+const isTodayIST = (date) => {
+  const ist = getISTTime();
+  const checkDate = new Date(date);
+  
+  return (
+    checkDate.getFullYear() === ist.getFullYear() &&
+    checkDate.getMonth() === ist.getMonth() &&
+    checkDate.getDate() === ist.getDate()
+  );
 };
 
 // IST Time restriction
@@ -25,28 +45,38 @@ const checkTimeRestriction = (type) => {
   const totalMinutes = hour * 60 + minute;
 
   if (type === 'checkin') {
-    // Check-in allowed: 6:00 AM IST to 11:30 AM IST
-    const minTime = 6 * 60;       // 6:00 AM
-    const maxTime = 11 * 60 + 30; // 11:30 AM
+    const minTime = 6 * 60;
+    const maxTime = 11 * 60 + 30;
     
     if (totalMinutes < minTime) {
-      return { allowed: false, message: `Check-in not allowed before 6:00 AM IST. Current time: ${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')} IST` };
+      return { 
+        allowed: false, 
+        message: `Check-in not allowed before 6:00 AM IST. Current time: ${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')} IST` 
+      };
     }
     if (totalMinutes > maxTime) {
-      return { allowed: false, message: `Check-in not allowed after 11:30 AM IST. Current time: ${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')} IST` };
+      return { 
+        allowed: false, 
+        message: `Check-in not allowed after 11:30 AM IST. Current time: ${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')} IST` 
+      };
     }
   }
 
   if (type === 'checkout') {
-    // Check-out allowed: 12:00 PM IST to 11:00 PM IST
-    const minTime = 12 * 60;      // 12:00 PM
-    const maxTime = 23 * 60;      // 11:00 PM
+    const minTime = 12 * 60;
+    const maxTime = 23 * 60;
     
     if (totalMinutes < minTime) {
-      return { allowed: false, message: `Check-out not allowed before 12:00 PM IST. Current time: ${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')} IST` };
+      return { 
+        allowed: false, 
+        message: `Check-out not allowed before 12:00 PM IST. Current time: ${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')} IST` 
+      };
     }
     if (totalMinutes > maxTime) {
-      return { allowed: false, message: `Check-out not allowed after 11:00 PM IST. Current time: ${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')} IST` };
+      return { 
+        allowed: false, 
+        message: `Check-out not allowed after 11:00 PM IST. Current time: ${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')} IST` 
+      };
     }
   }
 
@@ -82,7 +112,7 @@ const findMatchingFace = async (descriptor, userId) => {
   });
 
   if (!userFace) {
-    return { match: false, reason: 'No approved face registration found. Please register your face first.' };
+    return { match: false, reason: 'No approved face registration found' };
   }
 
   if (!userFace.samples || userFace.samples.length === 0) {
@@ -90,7 +120,6 @@ const findMatchingFace = async (descriptor, userId) => {
   }
 
   let bestDistance = Infinity;
-  let matched = false;
 
   for (const sample of userFace.samples) {
     const storedDescriptor = sample.descriptor;
@@ -103,7 +132,7 @@ const findMatchingFace = async (descriptor, userId) => {
   }
 
   const THRESHOLD = 0.5;
-  matched = bestDistance <= THRESHOLD;
+  const matched = bestDistance <= THRESHOLD;
 
   return {
     match: matched,
@@ -121,7 +150,6 @@ exports.checkIn = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: 'Invalid face descriptor' });
   }
 
-  // ✅ IST Time check
   const timeCheck = checkTimeRestriction('checkin');
   if (!timeCheck.allowed) {
     return res.status(400).json({ message: timeCheck.message });
@@ -137,8 +165,16 @@ exports.checkIn = asyncHandler(async (req, res) => {
     return res.status(401).json({ message: verification.reason, confidence: verification.confidence });
   }
 
+  // Use IST day boundaries
   const today = startOfISTDay();
-  const existing = await Attendance.findOne({ user: req.user.id, date: today });
+  const existing = await Attendance.findOne({ 
+    user: req.user.id, 
+    date: {
+      $gte: today,
+      $lt: endOfISTDay()
+    }
+  });
+
   if (existing?.checkIn) {
     return res.status(400).json({ message: 'Already checked in today' });
   }
@@ -171,7 +207,6 @@ exports.checkOut = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: 'Invalid face descriptor' });
   }
 
-  // ✅ IST Time check
   const timeCheck = checkTimeRestriction('checkout');
   if (!timeCheck.allowed) {
     return res.status(400).json({ message: timeCheck.message });
@@ -188,7 +223,13 @@ exports.checkOut = asyncHandler(async (req, res) => {
   }
 
   const today = startOfISTDay();
-  const attendance = await Attendance.findOne({ user: req.user.id, date: today });
+  const attendance = await Attendance.findOne({ 
+    user: req.user.id, 
+    date: {
+      $gte: today,
+      $lt: endOfISTDay()
+    }
+  });
 
   if (!attendance || !attendance.checkIn) {
     return res.status(400).json({ message: 'No check-in found for today' });
@@ -221,7 +262,13 @@ exports.checkOut = asyncHandler(async (req, res) => {
 // GET /api/attendance/today
 exports.todayAttendance = asyncHandler(async (req, res) => {
   const today = startOfISTDay();
-  const attendance = await Attendance.findOne({ user: req.user.id, date: today });
+  const attendance = await Attendance.findOne({ 
+    user: req.user.id, 
+    date: {
+      $gte: today,
+      $lt: endOfISTDay()
+    }
+  });
   res.json({ success: true, attendance });
 });
 
@@ -230,15 +277,26 @@ exports.history = asyncHandler(async (req, res) => {
   const page = Math.max(1, parseInt(req.query.page) || 1);
   const limit = Math.min(100, parseInt(req.query.limit) || 20);
   const filter = { user: req.user.id };
+  
   if (req.query.from || req.query.to) {
     filter.date = {};
-    if (req.query.from) filter.date.$gte = new Date(req.query.from);
-    if (req.query.to) filter.date.$lte = new Date(req.query.to);
+    if (req.query.from) {
+      const fromDate = new Date(req.query.from);
+      fromDate.setHours(0, 0, 0, 0);
+      filter.date.$gte = fromDate;
+    }
+    if (req.query.to) {
+      const toDate = new Date(req.query.to);
+      toDate.setHours(23, 59, 59, 999);
+      filter.date.$lte = toDate;
+    }
   }
+
   const [records, total] = await Promise.all([
     Attendance.find(filter).sort({ date: -1 }).skip((page - 1) * limit).limit(limit),
     Attendance.countDocuments(filter),
   ]);
+  
   res.json({ success: true, records, page, pages: Math.ceil(total / limit), total });
 });
 
@@ -246,11 +304,22 @@ exports.history = asyncHandler(async (req, res) => {
 exports.stats = asyncHandler(async (req, res) => {
   const now = getISTTime();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  
   const [present, late, absent, total] = await Promise.all([
     Attendance.countDocuments({ user: req.user.id, date: { $gte: monthStart }, status: 'present' }),
     Attendance.countDocuments({ user: req.user.id, date: { $gte: monthStart }, status: 'late' }),
     Attendance.countDocuments({ user: req.user.id, date: { $gte: monthStart }, status: 'absent' }),
     Attendance.countDocuments({ user: req.user.id, date: { $gte: monthStart } }),
   ]);
-  res.json({ success: true, stats: { present, late, absent, total, percentage: total ? Math.round(((present + late) / total) * 100) : 0 } });
+  
+  res.json({ 
+    success: true, 
+    stats: { 
+      present, 
+      late, 
+      absent, 
+      total, 
+      percentage: total ? Math.round(((present + late) / total) * 100) : 0 
+    } 
+  });
 });

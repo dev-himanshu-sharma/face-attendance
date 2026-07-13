@@ -10,9 +10,7 @@ const {
 } = require('../utils/face');
 
 // POST /api/face/register
-// POST /api/face/register
-// POST /api/face/register
-// POST /api/face/register
+
 exports.registerFace = asyncHandler(async (req, res) => {
   const { samples } = req.body;
   
@@ -66,7 +64,7 @@ exports.registerFace = asyncHandler(async (req, res) => {
   user.faceRejectionReason = undefined;
   await user.save();
 
-  // ✅ Notify all admins about face registration
+  // Notify all admins about face registration
   const Notification = require('../models/Notification');
   const admins = await User.find({ role: 'admin' });
   
@@ -80,7 +78,7 @@ exports.registerFace = asyncHandler(async (req, res) => {
     });
   }
   
-  console.log(`✅ Face registration notification sent to ${admins.length} admin(s)`);
+  console.log(`Face registration notification sent to ${admins.length} admin(s)`);
 
   res.json({ 
     success: true, 

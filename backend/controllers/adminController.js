@@ -19,7 +19,7 @@ const notifyAllAdmins = async (title, message, type, link) => {
       link,
     });
   }
-  console.log(`✅ Notification sent to ${admins.length} admin(s): ${title}`);
+  console.log(`Notification sent to ${admins.length} admin(s): ${title}`);
 };
 
 // Helper: Create notification for specific user
@@ -31,7 +31,7 @@ const notifyUser = async (userId, title, message, type, link) => {
     type,
     link,
   });
-  console.log(`✅ Notification sent to user ${userId}: ${title}`);
+  console.log(`Notification sent to user ${userId}: ${title}`);
 };
 
 // GET /admin/stats
@@ -108,7 +108,7 @@ exports.approveEmployee = asyncHandler(async (req, res) => {
   user.approvedBy = req.user.id;
   await user.save();
 
-  // ✅ Notify employee
+  //  Notify employee
   await notifyUser(
     user._id,
     'Account Approved',
@@ -138,7 +138,7 @@ exports.rejectEmployee = asyncHandler(async (req, res) => {
   user.isActive = false;
   await user.save();
 
-  // ✅ Notify employee
+  // Notify employee
   await notifyUser(
     user._id,
     'Account Rejected',
@@ -184,7 +184,7 @@ exports.approveFace = asyncHandler(async (req, res) => {
   user.faceApprovedBy = req.user.id;
   await user.save();
 
-  // ✅ Notify employee
+  // Notify employee
   await notifyUser(
     user._id,
     'Face Registration Approved',
@@ -220,7 +220,7 @@ exports.rejectFace = asyncHandler(async (req, res) => {
   user.faceRejectionReason = req.body.reason || 'Not specified';
   await user.save();
 
-  // ✅ Notify employee
+  // Notify employee
   await notifyUser(
     user._id,
     'Face Registration Rejected',
@@ -243,23 +243,39 @@ exports.rejectFace = asyncHandler(async (req, res) => {
 });
 
 // GET /admin/attendance/report
+// GET /admin/attendance/report
 exports.attendanceReport = asyncHandler(async (req, res) => {
   const { from, to, department, status } = req.query;
+  
   const filter = {};
+  
+  // Date filter with proper handling
   if (from || to) {
     filter.date = {};
-    if (from) filter.date.$gte = new Date(from);
-    if (to) filter.date.$lte = new Date(to);
+    if (from) {
+      const fromDate = new Date(from);
+      fromDate.setHours(0, 0, 0, 0);
+      filter.date.$gte = fromDate;
+    }
+    if (to) {
+      const toDate = new Date(to);
+      toDate.setHours(23, 59, 59, 999);
+      filter.date.$lte = toDate;
+    }
   }
+  
   if (status) filter.status = status;
 
+  // Build user filter
   let userFilter = { role: 'employee' };
   if (department) userFilter.department = department;
+  
   const userIds = (await User.find(userFilter).select('_id')).map((u) => u._id);
   filter.user = { $in: userIds };
 
   const page = Math.max(1, parseInt(req.query.page) || 1);
-  const limit = 20;
+  const limit = Math.min(100, parseInt(req.query.limit) || 20);
+  
   const [records, total] = await Promise.all([
     Attendance.find(filter)
       .populate('user', 'name employeeId department designation')
@@ -268,7 +284,14 @@ exports.attendanceReport = asyncHandler(async (req, res) => {
       .limit(limit),
     Attendance.countDocuments(filter),
   ]);
-  res.json({ success: true, records, page, pages: Math.ceil(total / limit), total });
+  
+  res.json({ 
+    success: true, 
+    records, 
+    page, 
+    pages: Math.ceil(total / limit), 
+    total 
+  });
 });
 
 // GET /admin/attendance/export

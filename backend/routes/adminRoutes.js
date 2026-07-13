@@ -26,7 +26,7 @@ router.post('/faces/:id/reject', ctrl.rejectFace);
 router.get('/attendance/report', reportQueryValidator, validate, ctrl.attendanceReport);
 router.get('/attendance/export', ctrl.exportAttendanceCsv);
 
-// ❌ REMOVED: Leave routes are already in leaveRoutes.js
+//  REMOVED: Leave routes are already in leaveRoutes.js
 // router.get('/leaves/all', ctrl.allLeaves);        ← This caused the error
 // router.put('/leaves/:id/review', ctrl.reviewLeave); ← This caused the error
 

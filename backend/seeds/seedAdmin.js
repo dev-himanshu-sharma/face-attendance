@@ -19,9 +19,9 @@ const connectDB = require('../config/db');
       isApproved: true,
       faceStatus: 'approved',
     });
-    console.log('✅ Admin created:', email, '/ Admin@123');
+    console.log('Admin created:', email, '/ Admin@123');
   } else {
-    console.log('ℹ️ Admin already exists');
+    console.log('ℹAdmin already exists');
   }
   process.exit(0);
 })();

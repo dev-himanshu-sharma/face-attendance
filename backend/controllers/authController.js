@@ -23,7 +23,7 @@ exports.register = asyncHandler(async (req, res) => {
     designation,
   });
 
-  // ✅ Notify all admins about new registration
+  // Notify all admins about new registration
   const Notification = require('../models/Notification');
   const admins = await User.find({ role: 'admin' });
   
@@ -37,7 +37,7 @@ exports.register = asyncHandler(async (req, res) => {
     });
   }
   
-  console.log(`✅ Registration notification sent to ${admins.length} admin(s)`);
+  console.log(`Registration notification sent to ${admins.length} admin(s)`);
 
   res.status(201).json({
     success: true,
@@ -62,7 +62,7 @@ exports.login = asyncHandler(async (req, res) => {
     return res.status(403).json({ message: 'Account deactivated' });
   }
 
-  // ✅ VALIDATE EMAIL BEFORE SENDING OTP
+  // VALIDATE EMAIL BEFORE SENDING OTP
   const { validateEmail } = require('../utils/emailValidator');
   const emailValidation = await validateEmail(email);
   
@@ -77,7 +77,7 @@ exports.login = asyncHandler(async (req, res) => {
 
   // ADMIN: No OTP required - login directly
   if (user.role === 'admin') {
-    console.log('\n🔐 Admin login (no OTP required)');
+    console.log('\nAdmin login (no OTP required)');
     
     user.lastLogin = new Date();
     await user.save({ validateBeforeSave: false });
@@ -103,7 +103,7 @@ exports.login = asyncHandler(async (req, res) => {
 
   // EMPLOYEE: OTP required only on first login
   if (user.firstLoginDone) {
-    console.log('\n🔐 Employee returning login (no OTP needed)');
+    console.log('\nEmployee returning login (no OTP needed)');
     
     user.lastLogin = new Date();
     await user.save({ validateBeforeSave: false });
@@ -128,14 +128,14 @@ exports.login = asyncHandler(async (req, res) => {
   }
 
   // First time login - send OTP
-  console.log('\n🔐 Employee first login - sending OTP');
+  console.log('\nEmployee first login - sending OTP');
   
   const otp = user.generateOtp('login');
   await user.save({ validateBeforeSave: false });
 
   // Log OTP to console
   console.log('\n' + '='.repeat(50));
-  console.log(`📧 LOGIN OTP for ${user.email}: ${otp}`);
+  console.log(` LOGIN OTP for ${user.email}: ${otp}`);
   console.log('='.repeat(50) + '\n');
 
   // Try email but don't crash
@@ -145,9 +145,9 @@ exports.login = asyncHandler(async (req, res) => {
       subject: 'Your Login OTP',
       html: otpTemplate(otp, 'login verification'),
     });
-    console.log('✅ OTP email sent successfully');
+    console.log('OTP email sent successfully');
   } catch (err) {
-    console.warn('⚠️  Email failed:', err.message);
+    console.warn('Email failed:', err.message);
     return res.status(500).json({
       message: 'Failed to send OTP email. Please check your email address or contact support.',
     });
@@ -209,7 +209,7 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
   await user.save({ validateBeforeSave: false });
 
   console.log('\n' + '='.repeat(50));
-  console.log(`🔐 RESET OTP for ${user.email}: ${otp}`);
+  console.log(`RESET OTP for ${user.email}: ${otp}`);
   console.log('='.repeat(50) + '\n');
 
   try {
@@ -219,7 +219,7 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
       html: resetTemplate(otp),
     });
   } catch (err) {
-    console.warn('⚠️  Email failed:', err.message);
+    console.warn('Email failed:', err.message);
   }
 
   res.json({ success: true, message: 'Reset OTP generated. Check console.' });

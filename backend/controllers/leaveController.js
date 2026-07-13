@@ -20,7 +20,7 @@ exports.applyLeave = asyncHandler(async (req, res) => {
     reason,
   });
 
-  // ✅ Create notification for ALL admins
+  // Create notification for ALL admins
   const admins = await User.find({ role: 'admin' });
   
   for (const admin of admins) {
@@ -33,7 +33,7 @@ exports.applyLeave = asyncHandler(async (req, res) => {
     });
   }
   
-  console.log(`✅ Leave notification sent to ${admins.length} admin(s)`);
+  console.log(`Leave notification sent to ${admins.length} admin(s)`);
 
   res.status(201).json({ success: true, leave });
 });
@@ -75,7 +75,7 @@ exports.reviewLeave = asyncHandler(async (req, res) => {
   leave.reviewedAt = new Date();
   await leave.save();
 
-  // ✅ Create notification for the employee
+  // Create notification for the employee
   await Notification.create({
     user: leave.user._id,
     title: `Leave Request ${status.charAt(0).toUpperCase() + status.slice(1)}`,
@@ -84,7 +84,7 @@ exports.reviewLeave = asyncHandler(async (req, res) => {
     link: '/leaves',
   });
 
-  console.log(`✅ Leave ${status} notification sent to ${leave.user.name}`);
+  console.log(`Leave ${status} notification sent to ${leave.user.name}`);
 
   try {
     await sendEmail({
