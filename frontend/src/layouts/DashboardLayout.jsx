@@ -40,7 +40,7 @@ export default function DashboardLayout() {
   const nav = useNavigate();
   const location = useLocation();
 
-  // ✅ Fetch all counters
+  // Fetch all counters
   const fetchCounters = useCallback(async () => {
     try {
       const newCounters = { ...counters };
@@ -73,7 +73,7 @@ export default function DashboardLayout() {
     return () => clearInterval(interval);
   }, [fetchCounters]);
 
-  // ✅ Re-fetch counters when navigating (e.g., after marking as read)
+  // rE-fetch counters when navigating (e.g., after marking as read)
   useEffect(() => {
     fetchCounters();
   }, [location.pathname]);
@@ -94,7 +94,7 @@ export default function DashboardLayout() {
         } lg:translate-x-0 transition-transform`}
       >
         <div className="h-16 flex items-center gap-2 px-6 border-b border-slate-200 dark:border-slate-700">
-          <div className="w-8 h-8 rounded-lg bg-primary-600 text-white flex items-center justify-center">🎯</div>
+          
           <span className="font-bold text-lg">FaceAttend</span>
         </div>
         <nav className="p-4 space-y-1">

@@ -13,9 +13,7 @@ export default function AuthLayout({ children, title, subtitle }) {
       </button>
       <div className="w-full max-w-md animate-fade-in">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-600 text-white text-2xl mb-3 shadow-lg">
-            🎯
-          </div>
+          
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{title}</h1>
           {subtitle && <p className="text-slate-500 dark:text-slate-400 mt-1">{subtitle}</p>}
         </div>

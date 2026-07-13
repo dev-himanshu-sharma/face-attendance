@@ -6,7 +6,7 @@ export const initMediaPipe = async () => {
   if (faceLandmarker) return faceLandmarker;
   
   try {
-    console.log('📦 Loading MediaPipe FaceLandmarker...');
+    console.log('Loading MediaPipe FaceLandmarker...');
     
     const vision = await FilesetResolver.forVisionTasks(
       'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm'

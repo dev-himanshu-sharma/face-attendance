@@ -7,33 +7,33 @@ const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
 
 export const loadModels = async () => {
   if (modelsLoaded) {
-    console.log('✅ Models already loaded');
+    console.log(' Models already loaded');
     return;
   }
   
   try {
-    console.log('📦 Starting to load face-api models from CDN...');
+    console.log(' Starting to load face-api models from CDN...');
     console.log('Model URL:', MODEL_URL);
     
     // Load each model one by one with logging
     console.log('Loading tinyFaceDetector...');
     await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
-    console.log('✅ tinyFaceDetector loaded');
+    console.log('tinyFaceDetector loaded');
     
     console.log('Loading faceLandmark68Net...');
     await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
-    console.log('✅ faceLandmark68Net loaded');
+    console.log(' faceLandmark68Net loaded');
     
     console.log('Loading faceRecognitionNet...');
     await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
-    console.log('✅ faceRecognitionNet loaded');
+    console.log('faceRecognitionNet loaded');
     
     console.log('Loading faceExpressionNet...');
     await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
-    console.log('✅ faceExpressionNet loaded');
+    console.log('faceExpressionNet loaded');
     
     modelsLoaded = true;
-    console.log('🎉 All models loaded successfully!');
+    console.log('All models loaded successfully!');
     
   } catch (err) {
     console.error('❌ Failed to load models:', err);

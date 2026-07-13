@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../../api/client';
-import { FiBell, FiCheck, FiTrash2 } from 'react-icons/fi';
+import { FiBell, FiCheck, FiTrash2, FiRefreshCw } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 export default function Notifications() {
@@ -17,13 +17,18 @@ export default function Notifications() {
       const res = await api.get('/notifications');
       
       console.log('✅ Notifications response:', res.data);
-      console.log(`   Total: ${res.data.notifications?.length || 0}`);
-      console.log(`   Unread: ${res.data.unread || 0}`);
-      
       setList(res.data.notifications || []);
     } catch (err) {
       console.error('❌ Failed to fetch notifications:', err);
-      setError('Failed to load notifications');
+      
+      if (err.response?.status === 401) {
+        setError('Session expired. Please login again.');
+      } else if (err.response?.status === 404) {
+        setError('Notification service not available.');
+      } else {
+        setError('Failed to load notifications. Please try again.');
+      }
+      
       toast.error('Failed to load notifications');
     } finally {
       setLoading(false);
@@ -79,9 +84,12 @@ export default function Notifications() {
   if (error) {
     return (
       <div className="card p-10 text-center">
-        <p className="text-red-500 mb-3">{error}</p>
-        <button onClick={fetchNotifications} className="btn-primary">
-          Retry
+        <div className="text-red-500 text-xl mb-4">⚠️ {error}</div>
+        <button 
+          onClick={fetchNotifications} 
+          className="btn-primary flex items-center gap-2 mx-auto"
+        >
+          <FiRefreshCw /> Retry
         </button>
       </div>
     );
@@ -118,14 +126,12 @@ export default function Notifications() {
                 n.read ? 'opacity-50' : 'border-l-4 border-l-primary-500 bg-primary-50/30 dark:bg-primary-900/10'
               }`}
             >
-              <div 
-                className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                  n.type === 'success' ? 'bg-green-100 text-green-600' :
-                  n.type === 'error' ? 'bg-red-100 text-red-600' :
-                  n.type === 'warning' ? 'bg-yellow-100 text-yellow-600' :
-                  'bg-primary-100 text-primary-600'
-                }`}
-              >
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                n.type === 'success' ? 'bg-green-100 text-green-600' :
+                n.type === 'error' ? 'bg-red-100 text-red-600' :
+                n.type === 'warning' ? 'bg-yellow-100 text-yellow-600' :
+                'bg-primary-100 text-primary-600'
+              }`}>
                 <FiBell />
               </div>
               <div className="flex-1 min-w-0">

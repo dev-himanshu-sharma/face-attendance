@@ -26,7 +26,6 @@ export default function FaceRegister() {
           nav('/dashboard');
         } else if (res.data.status === 'pending') {
           toast('Your face registration is pending admin approval', {
-            icon: 'ℹ️',
           });
         } else if (res.data.status === 'rejected') {
           toast.error(`Previous registration rejected: ${res.data.rejectionReason || 'No reason given'}`);
@@ -51,7 +50,6 @@ export default function FaceRegister() {
       
       // Show waiting message
       toast('Please wait for admin approval. You can check notifications for updates.', {
-        icon: 'ℹ️',
       });
       
       // Navigate after a delay
@@ -74,16 +72,15 @@ export default function FaceRegister() {
   };
 
   const handleClose = () => {
-    console.log('🚫 User clicked cancel - showing confirmation');
+    console.log(' User clicked cancel - showing confirmation');
     setShowCancelConfirm(true);
   };
 
   const confirmCancel = () => {
-    console.log('✅ User confirmed cancel');
+    console.log('User confirmed cancel');
     setShowCancelConfirm(false);
     nav('/dashboard');
     toast('Face registration cancelled', {
-      icon: 'ℹ️',
     });
   };
 

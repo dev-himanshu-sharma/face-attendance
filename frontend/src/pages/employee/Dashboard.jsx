@@ -36,7 +36,7 @@ export default function EmployeeDashboard() {
       
       if (currentUser?.faceStatus === 'pending') {
         toast('Your face registration is pending admin approval', {
-          icon: 'ℹ️',
+          
           duration: 4000,
         });
         setLoading(false);
@@ -64,13 +64,13 @@ export default function EmployeeDashboard() {
 
   const handleCheckIn = async (descriptor) => {
     try {
-      console.log('📤 Sending descriptor for check-in...');
+      console.log('Sending descriptor for check-in...');
       
       const r = await api.post('/attendance/checkin', { descriptor });
       
       toast.success(`✓ ${r.data.message}`, {
         duration: 5000,
-        icon: '🎉',
+        
       });
       
       if (r.data.matchConfidence) {
@@ -98,13 +98,12 @@ export default function EmployeeDashboard() {
 
   const handleCheckOut = async (descriptor) => {
     try {
-      console.log('📤 Sending descriptor for check-out...');
+      console.log('Sending descriptor for check-out...');
       
       const r = await api.post('/attendance/checkout', { descriptor });
       
       toast.success(`✓ ${r.data.message}`, {
         duration: 5000,
-        icon: '👋',
       });
       
       if (r.data.workingTime) {

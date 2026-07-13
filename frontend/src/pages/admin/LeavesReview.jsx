@@ -14,12 +14,11 @@ export default function LeavesReview() {
 
   const load = (page = 1) => {
     setLoading(true);
-    console.log('📬 Fetching leave requests...');
+    console.log('Fetching leave requests...');
     
-    // ✅ FIXED: Use /leaves/all instead of /admin/leaves/all
     api.get(`/leaves/all?page=${page}`)
       .then((r) => {
-        console.log('✅ Leave requests response:', r.data);
+        console.log('Leave requests response:', r.data);
         setData({
           leaves: r.data.leaves || [],
           page: r.data.page,
@@ -28,7 +27,7 @@ export default function LeavesReview() {
         });
       })
       .catch((err) => {
-        console.error('❌ Failed to load leaves:', err);
+        console.error('Failed to load leaves:', err);
         toast.error('Failed to load leave requests');
         setData({ leaves: [], page: 1, pages: 1, total: 0 });
       })
@@ -43,7 +42,6 @@ export default function LeavesReview() {
     if (!reviewModal) return;
     
     try {
-      // ✅ FIXED: Use /leaves/:id/review instead of /admin/leaves/:id/review
       await api.put(`/leaves/${reviewModal._id}/review`, { status, reviewNote: note });
       toast.success(`Leave ${status} successfully`);
       setReviewModal(null);

@@ -122,7 +122,7 @@ export default function FaceCamera({ mode, onCapture, onVerify, requireLiveness 
               
               if (passedBlink || passedHead) {
                 setLivenessOk(true);
-                setStatus('✅ Liveness verified!');
+                setStatus('Liveness verified!');
                 toast.success('Liveness verified!');
               } else {
                 let hint = '';
@@ -131,7 +131,7 @@ export default function FaceCamera({ mode, onCapture, onVerify, requireLiveness 
                 setStatus(`Hold still (${hint})`);
               }
             } else if (livenessOk) {
-              setStatus('✅ Ready - Click Verify');
+              setStatus('Ready - Click Verify');
             } else {
               setStatus('Face detected');
             }
