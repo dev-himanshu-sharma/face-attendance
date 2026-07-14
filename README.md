@@ -198,12 +198,13 @@ frontend
 
 ## 📸 Screenshots
 
-Add your screenshots inside a **screenshots** folder.
 
-```
-screenshots/
-Admin-(https://github.com/dev-himanshu-sharma/face-attendance/blob/main/screenshots/admin.png.png)
-```
+https://github.com/dev-himanshu-sharma/face-attendance/blob/main/screenshots/admin.png.png
+https://github.com/dev-himanshu-sharma/face-attendance/blob/main/screenshots/employee.png.png
+https://github.com/dev-himanshu-sharma/face-attendance/blob/main/screenshots/face-ai.png.png
+https://github.com/dev-himanshu-sharma/face-attendance/blob/main/screenshots/login.png.png
+https://github.com/dev-himanshu-sharma/face-attendance/blob/main/screenshots/notification.png.png
+
 
 ---
 
