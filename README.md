@@ -202,10 +202,7 @@ Add your screenshots inside a **screenshots** folder.
 
 ```
 screenshots/
-├── login.png.png
-├── employee.png.png
-├── face-ai.png.png
-└── admin.png.png
+Admin-(https://github.com/dev-himanshu-sharma/face-attendance/blob/main/screenshots/admin.png.png)
 ```
 
 ---
