@@ -198,13 +198,25 @@ frontend
 
 ## 📸 Screenshots
 
+### Login Page
 
-https://github.com/dev-himanshu-sharma/face-attendance/blob/main/screenshots/admin.png.png
-https://github.com/dev-himanshu-sharma/face-attendance/blob/main/screenshots/employee.png.png
-https://github.com/dev-himanshu-sharma/face-attendance/blob/main/screenshots/face-ai.png.png
-https://github.com/dev-himanshu-sharma/face-attendance/blob/main/screenshots/login.png.png
-https://github.com/dev-himanshu-sharma/face-attendance/blob/main/screenshots/notification.png.png
+![Login](https://raw.githubusercontent.com/dev-himanshu-sharma/face-attendance/main/screenshots/login.png.png)
 
+### Employee Dashboard
+
+![Employee Dashboard](https://raw.githubusercontent.com/dev-himanshu-sharma/face-attendance/main/screenshots/employee.png.png)
+
+### Admin Dashboard
+
+![Admin Dashboard](https://raw.githubusercontent.com/dev-himanshu-sharma/face-attendance/main/screenshots/admin.png.png)
+
+### Face Recognition
+
+![Face Recognition](https://raw.githubusercontent.com/dev-himanshu-sharma/face-attendance/main/screenshots/face-ai.png.png)
+
+### Notifications
+
+![Notifications](https://raw.githubusercontent.com/dev-himanshu-sharma/face-attendance/main/screenshots/notification.png.png)
 
 ---
 
