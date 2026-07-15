@@ -240,7 +240,7 @@ This project is licensed under the MIT License.
 If you don't want to clone the repository, you can download the complete project from Google Drive.
 
 **Google Drive:**  
-https://drive.google.com/drive/folders/1k0Nd6IwLoLQmgz2z0ok0zuCcMsyP-zit
+(https://drive.google.com/drive/folders/1k0Nd6IwLoLQmgz2z0ok0zuCcMsyP-zit?usp=sharing)
 
 After downloading:
 
